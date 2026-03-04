@@ -80,6 +80,21 @@ export interface Database {
         }
         Relationships: []
       }
+      site_visits: {
+        Row: {
+          id: string
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          visited_at?: string
+        }
+        Relationships: []
+      }
       user_activity: {
         Row: {
           last_seen_at: string

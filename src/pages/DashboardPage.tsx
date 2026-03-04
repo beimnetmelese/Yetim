@@ -97,35 +97,6 @@ export function DashboardPage() {
       setLoading(true);
       setError(null);
 
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError) {
-        throw userError;
-      }
-
-      if (user) {
-        const { error: activityError } = await supabase
-          .from("user_activity")
-          .upsert(
-            { user_id: user.id, last_seen_at: new Date().toISOString() },
-            { onConflict: "user_id" },
-          );
-
-        if (activityError) {
-          throw activityError;
-        }
-      }
-
-      const visitKey = "visit-counted";
-      if (!sessionStorage.getItem(visitKey)) {
-        await supabase.rpc("increment_site_visits").then(() => {
-          sessionStorage.setItem(visitKey, "1");
-        });
-      }
-
       const [
         dauRes,
         wauRes,
@@ -133,27 +104,29 @@ export function DashboardPage() {
         yauRes,
         postsRes,
         categoriesRes,
-        visitsRes,
+        totalVisitsRes,
       ] = await Promise.all([
         supabase
-          .from("user_activity")
+          .from("site_visits")
           .select("*", { count: "exact", head: true })
-          .gte("last_seen_at", timeThreshold(1)),
+          .gte("visited_at", timeThreshold(1)),
         supabase
-          .from("user_activity")
+          .from("site_visits")
           .select("*", { count: "exact", head: true })
-          .gte("last_seen_at", timeThreshold(7)),
+          .gte("visited_at", timeThreshold(7)),
         supabase
-          .from("user_activity")
+          .from("site_visits")
           .select("*", { count: "exact", head: true })
-          .gte("last_seen_at", timeThreshold(30)),
+          .gte("visited_at", timeThreshold(30)),
         supabase
-          .from("user_activity")
+          .from("site_visits")
           .select("*", { count: "exact", head: true })
-          .gte("last_seen_at", timeThreshold(365)),
+          .gte("visited_at", timeThreshold(365)),
         supabase.from("posts").select("*", { count: "exact", head: true }),
         supabase.from("categories").select("*", { count: "exact", head: true }),
-        supabase.from("site_stats").select("total_visits").eq("id", 1).single(),
+        supabase
+          .from("site_visits")
+          .select("*", { count: "exact", head: true }),
       ]);
 
       const firstError = [
@@ -163,7 +136,7 @@ export function DashboardPage() {
         yauRes.error,
         postsRes.error,
         categoriesRes.error,
-        visitsRes.error,
+        totalVisitsRes.error,
       ].find(Boolean);
 
       if (firstError) {
@@ -176,7 +149,7 @@ export function DashboardPage() {
           yau: yauRes.count ?? 0,
           totalPosts: postsRes.count ?? 0,
           totalCategories: categoriesRes.count ?? 0,
-          totalVisits: visitsRes.data?.total_visits ?? 0,
+          totalVisits: totalVisitsRes.count ?? 0,
         });
       }
 
