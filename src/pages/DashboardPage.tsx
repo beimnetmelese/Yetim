@@ -80,7 +80,7 @@ const statCards = [
     suffix: "categories",
   },
   {
-    label: "Site Visits",
+    label: "Total Site Visits",
     icon: Eye,
     gradient: "from-red-500 to-rose-500",
     suffix: "visits",
