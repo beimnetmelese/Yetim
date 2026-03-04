@@ -97,6 +97,28 @@ export function DashboardPage() {
       setLoading(true);
       setError(null);
 
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) {
+        throw userError;
+      }
+
+      if (user) {
+        const { error: activityError } = await supabase
+          .from("user_activity")
+          .upsert(
+            { user_id: user.id, last_seen_at: new Date().toISOString() },
+            { onConflict: "user_id" },
+          );
+
+        if (activityError) {
+          throw activityError;
+        }
+      }
+
       const visitKey = "visit-counted";
       if (!sessionStorage.getItem(visitKey)) {
         await supabase.rpc("increment_site_visits").then(() => {
