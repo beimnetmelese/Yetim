@@ -196,15 +196,15 @@ export function PostsPage() {
   };
 
   return (
-    <div className="space-y-8 pt-0 mt-0">
+    <div className="space-y-8 pt-0 mt-0 px-4 sm:px-6 md:px-0">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mt-0 pt-0"
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-0 pt-0"
       >
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
             Posts
           </h1>
           <p className="text-slate-500 mt-1">Manage your product inventory</p>
@@ -213,7 +213,7 @@ export function PostsPage() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30"
+          className="flex items-center justify-center w-full sm:w-auto gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30"
         >
           {showForm ? <X size={20} /> : <Plus size={20} />}
           <span>{showForm ? "Close" : "New Post"}</span>

@@ -10,7 +10,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 
 const navItems = [
@@ -29,6 +29,15 @@ export function AppLayout() {
     navigate("/login", { replace: true });
   };
 
+  useEffect(() => {
+    // Prevent background scroll when mobile menu is open
+    if (mobileMenuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 md:flex">
       {/* Animated background elements */}
@@ -40,7 +49,9 @@ export function AppLayout() {
       {/* Mobile menu button */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="fixed top-4 right-4 z-50 md:hidden bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-slate-200"
+        aria-expanded={mobileMenuOpen}
+        aria-controls="app-sidebar"
+        className="fixed top-4 right-4 z-60 md:hidden bg-white/80 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-slate-200"
       >
         {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -50,11 +61,10 @@ export function AppLayout() {
         initial={{ x: -300, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
-        className={`fixed md:static inset-y-0 left-0 z-40 w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200/60 shadow-2xl shadow-indigo-500/5 transform transition-transform duration-300 ${
-          mobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`fixed md:static inset-y-0 left-0 z-50 w-72 bg-white/80 backdrop-blur-xl border-r border-slate-200/60 shadow-2xl shadow-indigo-500/5 transform transition-transform duration-300 ${
+          mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 ${mobileMenuOpen ? "block" : "hidden md:block"}`}
+        id="app-sidebar"
       >
         <div className="flex flex-col h-full p-6">
           {/* Logo section */}
@@ -136,13 +146,20 @@ export function AppLayout() {
           </motion.div>
         </div>
       </motion.aside>
-
+      {/* Mobile overlay (closes sidebar when tapped) */}
+      {mobileMenuOpen && (
+        <button
+          aria-hidden
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 z-40 md:hidden bg-black/40"
+        />
+      )}
       {/* Main content */}
       <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="flex-1 px-4 pt-0 pb-6 md:px-8 md:pt-0 md:pb-8"
+        className="flex-1 px-4 pt-6 sm:pt-8 pb-6 md:px-8 md:pt-0 md:pb-8"
       >
         <div className="max-w-7xl mx-auto">
           <Outlet />
