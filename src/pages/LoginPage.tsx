@@ -3,14 +3,7 @@ import { FormEvent, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
-import {
-  Mail,
-  Lock,
-  LogIn,
-  UserPlus,
-  Sparkles,
-  ArrowRight,
-} from "lucide-react";
+import { Mail, Lock, LogIn, UserPlus, Sparkles } from "lucide-react";
 
 export function LoginPage() {
   const { user, signIn, signUp } = useAuth();
@@ -183,37 +176,6 @@ export function LoginPage() {
                 whileHover={{ x: 0 }}
                 transition={{ type: "tween" }}
               />
-            </motion.button>
-
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              type="button"
-              onClick={() => {
-                setMode((current) =>
-                  current === "login" ? "signup" : "login",
-                );
-                setError(null);
-                setMessage(null);
-              }}
-              className="w-full text-sm text-slate-600 hover:text-indigo-600 transition-colors flex items-center justify-center gap-1 group"
-            >
-              {mode === "login" ? (
-                <>
-                  Don't have an account?
-                  <span className="font-medium group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                    Sign up <ArrowRight size={14} />
-                  </span>
-                </>
-              ) : (
-                <>
-                  Already have an account?
-                  <span className="font-medium group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                    Sign in <ArrowRight size={14} />
-                  </span>
-                </>
-              )}
             </motion.button>
           </form>
         </div>
