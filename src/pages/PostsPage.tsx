@@ -35,6 +35,7 @@ interface PostFormState {
   price: string;
   description: string;
   category_id: string;
+  currentImageUrl: string | null;
   imageFile: File | null;
 }
 
@@ -43,6 +44,7 @@ const initialForm: PostFormState = {
   price: "",
   description: "",
   category_id: "",
+  currentImageUrl: null,
   imageFile: null,
 };
 
@@ -138,7 +140,7 @@ export function PostsPage() {
     setError(null);
 
     try {
-      let imageUrl: string | null = null;
+      let imageUrl = form.currentImageUrl;
       if (form.imageFile) {
         imageUrl = await uploadImage(form.imageFile);
       }
@@ -180,6 +182,7 @@ export function PostsPage() {
       price: String(post.price),
       description: post.description,
       category_id: post.category_id ?? "",
+      currentImageUrl: post.image_url,
       imageFile: null,
     });
     setShowForm(true);
@@ -289,6 +292,18 @@ export function PostsPage() {
                     <ImageIcon size={16} className="text-indigo-500" />
                     Image
                   </span>
+                  {form.currentImageUrl && !form.imageFile && (
+                    <div className="mb-3 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                      <img
+                        src={form.currentImageUrl}
+                        alt={form.name || "Current post image"}
+                        className="h-32 w-full object-cover"
+                      />
+                      <p className="px-3 py-2 text-xs text-slate-500">
+                        Current image will be kept unless you choose a new one.
+                      </p>
+                    </div>
+                  )}
                   <input
                     type="file"
                     accept="image/*"
